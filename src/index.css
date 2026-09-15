@@ -20,6 +20,8 @@
   --color-accuracy: #2a78d6;
   --color-duration: #eb6834;
   --color-pace: #4a3aa7;
+  /* 講義ビデオ。問題演習(orange)との組み合わせで CVD 検証済み */
+  --color-video: #4a3aa7;
   --color-streak: #eb6834;
 
   /* ステータス（系列色とは用途を分ける） */

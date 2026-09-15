@@ -1,45 +1,77 @@
-import { useState } from 'react'
-import { useAuth } from '../../auth/useAuth'
-import { useCreateSession } from '../../hooks/mutations'
-import { clearPending, loadPending } from '../../lib/pendingSession'
-import { Button } from '../ui'
+import { useEffect, useState } from "react";
+import { useAuth } from "../../auth/useAuth";
+import { useCreateSession, useCreateVideoSession } from "../../hooks/mutations";
+import {
+  clearPending,
+  loadPending,
+  subscribePending,
+} from "../../lib/pendingSession";
+import { Button } from "../ui";
 
 /**
  * オフライン等で保存できなかった記録の再送を促す。
  * 計測したのに消えてしまった、という事故を防ぐための最後の砦。
  */
 export function PendingSessionBanner() {
-  const { user } = useAuth()
-  const createSession = useCreateSession()
-  const [pending, setPending] = useState(() => loadPending())
+  const { user } = useAuth();
+  const createSession = useCreateSession();
+  const createVideoSession = useCreateVideoSession();
+  const [pending, setPending] = useState(() => loadPending());
+  const [error, setError] = useState<unknown>(null);
 
-  if (pending.length === 0 || !user) return null
+  // 保存に失敗した直後にその場で出す（次回起動まで気づけないのを避ける）
+  useEffect(() => subscribePending(() => setPending(loadPending())), []);
+
+  if (pending.length === 0 || !user) return null;
+
+  const busy = createSession.isPending || createVideoSession.isPending;
 
   const retry = async () => {
-    for (const session of pending) {
-      await createSession.mutateAsync({ ...session, created_by: user.id })
+    setError(null);
+    try {
+      for (const entry of pending) {
+        if (entry.kind === "practice") {
+          await createSession.mutateAsync({
+            ...entry.payload,
+            created_by: user.id,
+          });
+        } else {
+          await createVideoSession.mutateAsync({
+            ...entry.payload,
+            created_by: user.id,
+          });
+        }
+      }
+      clearPending();
+    } catch (e) {
+      // 失敗したらキューはそのまま残す（次の機会にもう一度出す）
+      setError(e);
     }
-    clearPending()
-    setPending([])
-  }
+  };
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
-      <span className="flex-1">保存できていない記録が{pending.length}件あります。</span>
-      <Button variant="secondary" onClick={retry} disabled={createSession.isPending}>
-        {createSession.isPending ? '送信中…' : '再送する'}
-      </Button>
-      <button
-        onClick={() => {
-          if (confirm('保存できていない記録を破棄しますか？')) {
-            clearPending()
-            setPending([])
-          }
-        }}
-        className="text-xs text-amber-700 hover:underline"
-      >
-        破棄
-      </button>
+    <div className="mb-4 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="flex-1">
+          保存できていない記録が{pending.length}件あります。
+        </span>
+        <Button variant="secondary" onClick={retry} disabled={busy}>
+          {busy ? "送信中…" : "再送する"}
+        </Button>
+        <button
+          onClick={() => {
+            if (confirm("保存できていない記録を破棄しますか？")) clearPending();
+          }}
+          className="text-xs text-amber-700 hover:underline"
+        >
+          破棄
+        </button>
+      </div>
+      {error != null && (
+        <p className="mt-2 text-xs">
+          再送に失敗しました。通信状況を確認してもう一度お試しください。
+        </p>
+      )}
     </div>
-  )
+  );
 }

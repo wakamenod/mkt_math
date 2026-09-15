@@ -1,37 +1,46 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from "react";
 
-const STORAGE_KEY = 'mkt_math.timer.v1'
+// 計測対象が「練習問題 or 講義ビデオ」に広がったのでキーを v2 に上げる
+const STORAGE_KEY = "mkt_math.timer.v2";
 /** これを超えて経過していたら「止め忘れ」とみなして警告する。 */
-export const ABANDONED_THRESHOLD_SECONDS = 6 * 60 * 60
+export const ABANDONED_THRESHOLD_SECONDS = 6 * 60 * 60;
 
 interface Segment {
-  start: number
-  end: number | null
+  start: number;
+  end: number | null;
 }
 
+/** 何を計測しているか。ビデオは範囲の区分けを持たない。 */
+export type TimerTarget =
+  { kind: "practice"; exerciseSetId: string } | { kind: "video" };
+
 export interface TimerState {
-  exerciseSetId: string
-  startedAt: number
-  segments: Segment[]
-  status: 'running' | 'paused'
+  target: TimerTarget;
+  startedAt: number;
+  segments: Segment[];
+  status: "running" | "paused";
 }
 
 function load(): TimerState | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as TimerState
-    if (!parsed?.exerciseSetId || !Array.isArray(parsed.segments)) return null
-    return parsed
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as TimerState;
+    if (!Array.isArray(parsed?.segments) || parsed.segments.length === 0)
+      return null;
+    const kind = parsed.target?.kind;
+    if (kind === "video") return parsed;
+    if (kind === "practice" && parsed.target.exerciseSetId) return parsed;
+    return null;
   } catch {
-    return null
+    return null;
   }
 }
 
 function save(state: TimerState | null) {
   try {
-    if (state === null) localStorage.removeItem(STORAGE_KEY)
-    else localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    if (state === null) localStorage.removeItem(STORAGE_KEY);
+    else localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
     // プライベートモード等で書けなくても計測自体は続行する
   }
@@ -39,7 +48,10 @@ function save(state: TimerState | null) {
 
 /** 一時停止を除いた実経過ミリ秒。壁時計から都度計算する。 */
 function elapsedMs(state: TimerState, now: number): number {
-  return state.segments.reduce((total, seg) => total + ((seg.end ?? now) - seg.start), 0)
+  return state.segments.reduce(
+    (total, seg) => total + ((seg.end ?? now) - seg.start),
+    0,
+  );
 }
 
 /**
@@ -49,95 +61,103 @@ function elapsedMs(state: TimerState, now: number): number {
  * localStorage に開始時刻を置くので、リロードや画面ロックを跨いでも正しい。
  */
 export function usePersistentTimer() {
-  const [state, setState] = useState<TimerState | null>(() => load())
+  const [state, setState] = useState<TimerState | null>(() => load());
   // 「今」を state に持ち、tick のたびに更新する。
   // レンダー中に Date.now() を読まないので、表示は常にこの値から決まる。
-  const [now, setNow] = useState(() => Date.now())
-  const stateRef = useRef(state)
+  const [now, setNow] = useState(() => Date.now());
+  const stateRef = useRef(state);
 
   useEffect(() => {
-    stateRef.current = state
-  }, [state])
+    stateRef.current = state;
+  }, [state]);
 
   const update = useCallback((next: TimerState | null) => {
-    stateRef.current = next
-    setState(next)
-    setNow(Date.now())
-    save(next)
-  }, [])
+    stateRef.current = next;
+    setState(next);
+    setNow(Date.now());
+    save(next);
+  }, []);
 
   // 表示更新のための tick。経過値は tick ごとに壁時計から取り直す。
   useEffect(() => {
-    if (state?.status !== 'running') return
-    const id = setInterval(() => setNow(Date.now()), 500)
-    return () => clearInterval(id)
-  }, [state?.status])
+    if (state?.status !== "running") return;
+    const id = setInterval(() => setNow(Date.now()), 500);
+    return () => clearInterval(id);
+  }, [state?.status]);
 
   // スリープ復帰・タブ復帰の直後に即座に正しい値を出す
   useEffect(() => {
-    const tick = () => setNow(Date.now())
-    document.addEventListener('visibilitychange', tick)
-    window.addEventListener('focus', tick)
+    const tick = () => setNow(Date.now());
+    document.addEventListener("visibilitychange", tick);
+    window.addEventListener("focus", tick);
     return () => {
-      document.removeEventListener('visibilitychange', tick)
-      window.removeEventListener('focus', tick)
-    }
-  }, [])
+      document.removeEventListener("visibilitychange", tick);
+      window.removeEventListener("focus", tick);
+    };
+  }, []);
 
   const start = useCallback(
-    (exerciseSetId: string) => {
-      const now = Date.now()
+    (target: TimerTarget) => {
+      const now = Date.now();
       update({
-        exerciseSetId,
+        target,
         startedAt: now,
         segments: [{ start: now, end: null }],
-        status: 'running',
-      })
+        status: "running",
+      });
     },
     [update],
-  )
+  );
 
   const pause = useCallback(() => {
-    const s = stateRef.current
-    if (!s || s.status !== 'running') return
-    const now = Date.now()
+    const s = stateRef.current;
+    if (!s || s.status !== "running") return;
+    const now = Date.now();
     update({
       ...s,
-      status: 'paused',
+      status: "paused",
       segments: s.segments.map((seg, i) =>
-        i === s.segments.length - 1 && seg.end === null ? { ...seg, end: now } : seg,
+        i === s.segments.length - 1 && seg.end === null
+          ? { ...seg, end: now }
+          : seg,
       ),
-    })
-  }, [update])
+    });
+  }, [update]);
 
   const resume = useCallback(() => {
-    const s = stateRef.current
-    if (!s || s.status !== 'paused') return
-    update({ ...s, status: 'running', segments: [...s.segments, { start: Date.now(), end: null }] })
-  }, [update])
+    const s = stateRef.current;
+    if (!s || s.status !== "paused") return;
+    update({
+      ...s,
+      status: "running",
+      segments: [...s.segments, { start: Date.now(), end: null }],
+    });
+  }, [update]);
 
   /** 計測を終了し、保存に必要な値を返す（破棄はまだしない）。 */
   const stop = useCallback(() => {
-    const s = stateRef.current
-    if (!s) return null
-    const now = Date.now()
+    const s = stateRef.current;
+    if (!s) return null;
+    const now = Date.now();
     return {
-      exerciseSetId: s.exerciseSetId,
+      target: s.target,
       startedAt: new Date(s.startedAt).toISOString(),
       endedAt: new Date(now).toISOString(),
       durationSeconds: Math.round(elapsedMs(s, now) / 1000),
-    }
-  }, [])
+    };
+  }, []);
 
-  const clear = useCallback(() => update(null), [update])
+  const clear = useCallback(() => update(null), [update]);
 
-  const seconds = state ? Math.max(0, Math.floor(elapsedMs(state, now) / 1000)) : 0
+  const seconds = state
+    ? Math.max(0, Math.floor(elapsedMs(state, now) / 1000))
+    : 0;
 
   return {
     state,
     seconds,
-    isRunning: state?.status === 'running',
-    isPaused: state?.status === 'paused',
+    isRunning: state?.status === "running",
+    isPaused: state?.status === "paused",
     /** 止め忘れの疑い。復帰時に警告を出す。 */
     isAbandoned: state !== null && seconds > ABANDONED_THRESHOLD_SECONDS,
     start,
@@ -145,5 +165,5 @@ export function usePersistentTimer() {
     resume,
     stop,
     clear,
-  }
+  };
 }

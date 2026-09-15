@@ -1,6 +1,11 @@
-import { useMemo } from 'react'
-import type { ExerciseSetWithCategory, SessionWithSet } from '../types/domain'
-import { computeStreak } from './streak'
+import { useMemo } from "react";
+import type {
+  ExerciseSetWithCategory,
+  SessionWithSet,
+  VideoSession,
+} from "../types/domain";
+import { toStudyEntries } from "../components/session/StudyEntryList";
+import { computeStreak } from "./streak";
 import {
   accuracyByCategoryOverTime,
   byCategory,
@@ -9,28 +14,41 @@ import {
   dailySeries,
   heatmap,
   improvements,
-  recentDaily,
+  recentDailyTime,
+  studyDates,
   summarize,
+  timeBreakdown,
   weakestSets,
-} from './selectors'
+} from "./selectors";
 
-/** ダッシュボードが必要とする集計を一度にまとめて計算する。 */
-export function useStats(sessions: SessionWithSet[], sets: ExerciseSetWithCategory[]) {
+/**
+ * ダッシュボードが必要とする集計を一度にまとめて計算する。
+ *
+ * 正答率系（summary / categories / weakest / improvements など）は
+ * 問題演習のセッションだけを見る。講義ビデオは問題を解いていないので、
+ * 学習時間・連続学習日数・草グラフにだけ効く。
+ */
+export function useStats(
+  sessions: SessionWithSet[],
+  videos: VideoSession[],
+  sets: ExerciseSetWithCategory[],
+) {
   return useMemo(
     () => ({
       summary: summarize(sessions),
-      streak: computeStreak(sessions.map((s) => s.study_date)),
+      time: timeBreakdown(sessions, videos),
+      streak: computeStreak(studyDates(sessions, videos)),
       daily: dailySeries(sessions),
-      recent30: recentDaily(sessions, 30),
+      recentTime30: recentDailyTime(sessions, videos, 30),
       categories: byCategory(sessions),
       categoryTrend: accuracyByCategoryOverTime(sessions),
       exerciseSets: byExerciseSet(sessions),
       weakest: weakestSets(sessions),
       improvements: improvements(sessions),
       coverage: coverage(sets, sessions),
-      heatmap: heatmap(sessions),
-      recentSessions: [...sessions].sort((a, b) => b.started_at.localeCompare(a.started_at)).slice(0, 5),
+      heatmap: heatmap(sessions, videos),
+      recentEntries: toStudyEntries(sessions, videos).slice(0, 5),
     }),
-    [sessions, sets],
-  )
+    [sessions, videos, sets],
+  );
 }

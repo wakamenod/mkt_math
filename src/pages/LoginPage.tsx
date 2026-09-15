@@ -1,31 +1,31 @@
-import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../auth/useAuth'
-import { Button, Card, ErrorNote } from '../components/ui'
+import { useState, type FormEvent } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
+import { Button, Card, ErrorNote } from "../components/ui";
 
 export function LoginPage() {
-  const { user, signIn } = useAuth()
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<unknown>(null)
-  const [busy, setBusy] = useState(false)
+  const { user, signIn } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<unknown>(null);
+  const [busy, setBusy] = useState(false);
 
-  if (user) return <Navigate to="/" replace />
+  if (user) return <Navigate to="/" replace />;
 
   const onSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setBusy(true)
-    setError(null)
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
     try {
-      await signIn(email, password)
-      navigate('/study', { replace: true })
+      await signIn(email, password);
+      navigate("/study", { replace: true });
     } catch (err) {
-      setError(err)
+      setError(err);
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-sm pt-10">
@@ -51,7 +51,7 @@ export function LoginPage() {
           />
           {error != null && <ErrorNote error={error} />}
           <Button type="submit" className="w-full py-3" disabled={busy}>
-            {busy ? 'ログイン中…' : 'ログイン'}
+            {busy ? "ログイン中…" : "ログイン"}
           </Button>
         </form>
       </Card>
@@ -59,5 +59,5 @@ export function LoginPage() {
         ダッシュボードの閲覧にログインは不要です
       </p>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -8,11 +8,12 @@ export const queryClient = new QueryClient({
       retry: 1,
     },
   },
-})
+});
 
 /** クエリキーの単一定義。invalidate 漏れを防ぐためここ以外に文字列を書かない。 */
 export const qk = {
-  categories: ['categories'] as const,
-  exerciseSets: ['exercise_sets'] as const,
-  sessions: ['sessions'] as const,
-}
+  categories: ["categories"] as const,
+  exerciseSets: ["exercise_sets"] as const,
+  sessions: ["sessions"] as const,
+  videoSessions: ["video_sessions"] as const,
+};

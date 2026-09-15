@@ -1,22 +1,24 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from './useAuth'
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "./useAuth";
 
 /**
  * 書き込み系ページのガード。
  * 閲覧系ページはガードしない（未ログインでもダッシュボードは見える設計）。
  */
 export function RequireAuth({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-500">読み込み中…</div>
+    return <div className="p-8 text-center text-slate-500">読み込み中…</div>;
   }
 
   if (!user) {
     return (
       <div className="mx-auto max-w-sm px-4 py-16 text-center">
-        <p className="text-lg font-semibold text-slate-900">閲覧専用モードです</p>
+        <p className="text-lg font-semibold text-slate-900">
+          閲覧専用モードです
+        </p>
         <p className="mt-2 text-sm text-slate-600">
           記録の入力・編集にはログインが必要です。
         </p>
@@ -27,8 +29,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
           ログイン
         </Link>
       </div>
-    )
+    );
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

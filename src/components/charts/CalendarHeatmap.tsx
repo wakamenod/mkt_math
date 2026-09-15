@@ -1,8 +1,8 @@
-import type { HeatmapDay } from '../../stats/selectors'
-import { formatIsoDateJp } from '../../lib/format'
+import type { HeatmapDay } from "../../stats/selectors";
+import { formatIsoDateJp } from "../../lib/format";
 
-const LEVEL_COLORS = ['#f0efec', '#b7d3f6', '#6da7ec', '#2a78d6', '#184f95']
-const WEEKDAY_LABELS = ['', '月', '', '水', '', '金', '']
+const LEVEL_COLORS = ["#f0efec", "#b7d3f6", "#6da7ec", "#2a78d6", "#184f95"];
+const WEEKDAY_LABELS = ["", "月", "", "水", "", "金", ""];
 
 /**
  * 学習した日の草グラフ。Recharts では作れないので手書き。
@@ -10,8 +10,8 @@ const WEEKDAY_LABELS = ['', '月', '', '水', '', '金', '']
  */
 export function CalendarHeatmap({ days }: { days: HeatmapDay[] }) {
   // 7日ずつ = 1列（日曜始まり）
-  const weeks: HeatmapDay[][] = []
-  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7))
+  const weeks: HeatmapDay[][] = [];
+  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
   return (
     <div>
@@ -58,5 +58,5 @@ export function CalendarHeatmap({ days }: { days: HeatmapDay[] }) {
         <span>多い</span>
       </div>
     </div>
-  )
+  );
 }

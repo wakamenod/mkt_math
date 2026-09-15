@@ -1,8 +1,16 @@
-import { Bar, BarChart, Cell, LabelList, Tooltip, XAxis, YAxis } from 'recharts'
-import type { CategoryStat } from '../../stats/selectors'
-import { formatRate, formatTotalDuration } from '../../lib/format'
-import { AXIS_PROPS, CHART, ChartFrame, TooltipBox } from './chrome'
-import { EmptyState } from '../ui'
+import {
+  Bar,
+  BarChart,
+  Cell,
+  LabelList,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { CategoryStat } from "../../stats/selectors";
+import { formatRate, formatTotalDuration } from "../../lib/format";
+import { AXIS_PROPS, CHART, ChartFrame, TooltipBox } from "./chrome";
+import { EmptyState } from "../ui";
 
 /**
  * 大分類ごとの正答率。
@@ -10,7 +18,7 @@ import { EmptyState } from '../ui'
  * （色だけに情報を持たせない）。
  */
 export function CategoryBarChart({ data }: { data: CategoryStat[] }) {
-  if (data.length === 0) return <EmptyState title="まだ記録がありません" />
+  if (data.length === 0) return <EmptyState title="まだ記録がありません" />;
 
   return (
     <ChartFrame rows={data.length}>
@@ -29,19 +37,28 @@ export function CategoryBarChart({ data }: { data: CategoryStat[] }) {
           axisLine={false}
         />
         <Tooltip
-          cursor={{ fill: 'rgba(11,11,11,0.04)' }}
+          cursor={{ fill: "rgba(11,11,11,0.04)" }}
           content={({ active, payload }) =>
             active && payload?.length ? (
               <TooltipBox
                 title={payload[0].payload.categoryName}
                 rows={[
-                  { label: '正答率', value: formatRate(payload[0].payload.accuracy) },
                   {
-                    label: '正解',
+                    label: "正答率",
+                    value: formatRate(payload[0].payload.accuracy),
+                  },
+                  {
+                    label: "正解",
                     value: `${payload[0].payload.correctCount} / ${payload[0].payload.problemCount}問`,
                   },
-                  { label: '学習時間', value: formatTotalDuration(payload[0].payload.totalSeconds) },
-                  { label: '回数', value: `${payload[0].payload.sessionCount}回` },
+                  {
+                    label: "学習時間",
+                    value: formatTotalDuration(payload[0].payload.totalSeconds),
+                  },
+                  {
+                    label: "回数",
+                    value: `${payload[0].payload.sessionCount}回`,
+                  },
                 ]}
               />
             ) : null
@@ -55,17 +72,20 @@ export function CategoryBarChart({ data }: { data: CategoryStat[] }) {
           isAnimationActive={false}
         >
           {data.map((d, i) => (
-            <Cell key={d.categoryId} fill={CHART.series[i % CHART.series.length]} />
+            <Cell
+              key={d.categoryId}
+              fill={CHART.series[i % CHART.series.length]}
+            />
           ))}
           <LabelList
             dataKey="accuracy"
             position="right"
-            formatter={(v) => formatRate(typeof v === 'number' ? v : null)}
+            formatter={(v) => formatRate(typeof v === "number" ? v : null)}
             fill="#52514e"
             fontSize={11}
           />
         </Bar>
       </BarChart>
     </ChartFrame>
-  )
+  );
 }
