@@ -5,6 +5,8 @@ import { AuthProvider } from "./auth/AuthProvider";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AppShell } from "./components/layout/AppShell";
 import { queryClient } from "./lib/queryClient";
+import { missingEnvVars } from "./lib/env";
+import { EnvSetupNotice } from "./components/layout/EnvSetupNotice";
 import { HistoryPage } from "./pages/HistoryPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ManagePage } from "./pages/ManagePage";
@@ -29,6 +31,10 @@ const ExerciseSetDetailPage = lazy(() =>
 );
 
 export default function App() {
+  // 接続情報がなければ何も動かないので、原因の分かる画面を出して止める。
+  const missing = missingEnvVars();
+  if (missing.length > 0) return <EnvSetupNotice missing={missing} />;
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
