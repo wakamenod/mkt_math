@@ -61,10 +61,10 @@ export function ExerciseSetPicker({
             disabled={c.count === 0}
             className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition ${
               c.id === categoryId
-                ? "bg-slate-900 text-white"
+                ? "bg-accent text-accent-ink"
                 : c.count === 0
-                  ? "bg-slate-100 text-slate-300"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-surface-2 text-ink-faint"
+                  : "bg-surface-2 text-ink-soft hover:bg-surface-3"
             }`}
           >
             {c.name}
@@ -85,12 +85,10 @@ export function ExerciseSetPicker({
               <button
                 key={s.id}
                 onClick={() => onPick(s)}
-                className="flex aspect-square flex-col items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition active:scale-95 hover:ring-slate-900"
+                className="flex aspect-square flex-col items-center justify-center rounded-xl bg-surface shadow-sm ring-1 ring-line transition active:scale-95 hover:ring-accent"
               >
-                <span className="text-lg font-bold text-slate-900">
-                  {s.number}
-                </span>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-lg font-bold text-ink">{s.number}</span>
+                <span className="text-[10px] text-ink-faint">
                   {s.problem_count}問
                 </span>
                 {attempts > 0 && (

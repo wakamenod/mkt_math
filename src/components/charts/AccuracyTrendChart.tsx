@@ -90,7 +90,7 @@ export function AccuracyTrendChart({ data }: { data: DailyPoint[] }) {
       </ChartFrame>
 
       {/* 2系列あるので凡例は必須。色だけに意味を持たせない。 */}
-      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
         <li className="flex items-center gap-1.5">
           <span
             className="inline-block h-0.5 w-4"

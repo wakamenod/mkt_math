@@ -98,7 +98,7 @@ export function CategoryDetailPage() {
               hint="設定画面から追加してください"
             />
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-line">
               {[...categorySets]
                 .sort((a, b) => a.number - b.number)
                 .map((s) => {
@@ -107,19 +107,19 @@ export function CategoryDetailPage() {
                     <li key={s.id}>
                       <Link
                         to={`/sets/${s.id}`}
-                        className="flex items-center gap-3 py-3 transition hover:bg-slate-50"
+                        className="flex items-center gap-3 py-3 transition hover:bg-surface-2"
                       >
-                        <span className="tnum flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-700">
+                        <span className="tnum flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-sm font-bold text-ink">
                           {s.number}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-ink">
                             練習問題{s.number}
-                            <span className="ml-2 text-xs font-normal text-slate-400">
+                            <span className="ml-2 text-xs font-normal text-ink-faint">
                               {s.problem_count}問
                             </span>
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-ink-soft">
                             {stat
                               ? `${stat.attemptCount}回 · 最終 ${formatIsoDateJp(toJstDate(stat.lastStudiedAt!))}`
                               : "未実施"}

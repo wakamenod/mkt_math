@@ -71,7 +71,7 @@ export function HistoryPage() {
       onClick={() => {
         if (confirm("この記録を削除しますか？")) onDelete();
       }}
-      className="shrink-0 rounded-lg px-2 py-1 text-xs text-slate-400 hover:bg-red-50 hover:text-red-600"
+      className="shrink-0 rounded-lg px-2 py-1 text-xs text-ink-faint hover:bg-danger-bg hover:text-danger-ink"
       aria-label="削除"
     >
       削除
@@ -90,8 +90,8 @@ export function HistoryPage() {
               onClick={() => setFilter(t.id)}
               className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition ${
                 t.id === filter
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-accent text-accent-ink"
+                  : "bg-surface-2 text-ink-soft hover:bg-surface-3"
               }`}
             >
               {t.name}

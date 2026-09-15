@@ -20,23 +20,23 @@ export function SessionCard({
       <div className="min-w-0 flex-1">
         <Link
           to={`/sets/${session.exercise_set_id}`}
-          className="block truncate text-sm font-semibold text-slate-900 hover:underline"
+          className="block truncate text-sm font-semibold text-ink hover:underline"
         >
           {setLabel(session.exercise_set)}
         </Link>
-        <p className="tnum mt-0.5 text-xs text-slate-500">
+        <p className="tnum mt-0.5 text-xs text-ink-soft">
           {formatIsoDateJp(session.study_date)} ·{" "}
           {formatDuration(session.duration_seconds)}
         </p>
         {session.note && (
-          <p className="mt-1 truncate text-xs text-slate-400">{session.note}</p>
+          <p className="mt-1 truncate text-xs text-ink-faint">{session.note}</p>
         )}
       </div>
 
       <div className="shrink-0 text-right">
-        <p className="tnum text-sm font-bold text-slate-900">
+        <p className="tnum text-sm font-bold text-ink">
           {session.correct_count}
-          <span className="text-xs font-normal text-slate-400">
+          <span className="text-xs font-normal text-ink-faint">
             {" "}
             / {session.problem_count_snapshot}
           </span>

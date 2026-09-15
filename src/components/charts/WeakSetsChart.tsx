@@ -81,7 +81,7 @@ export function WeakSetsChart({
             dataKey="accuracy"
             position="right"
             formatter={(v) => formatRate(typeof v === "number" ? v : null)}
-            fill="#52514e"
+            fill={CHART.muted}
             fontSize={11}
           />
         </Bar>

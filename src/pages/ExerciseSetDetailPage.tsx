@@ -56,7 +56,7 @@ export function ExerciseSetDetailPage() {
         {setLabel(set)}
       </PageTitle>
 
-      <p className="-mt-2 mb-4 text-sm text-slate-500">
+      <p className="-mt-2 mb-4 text-sm text-ink-soft">
         <Link to={`/categories/${set.category.id}`} className="hover:underline">
           {set.category.name}
         </Link>
@@ -86,7 +86,7 @@ export function ExerciseSetDetailPage() {
       </div>
 
       {attempts.length >= 2 && first && latest && (
-        <div className="mt-3 rounded-2xl bg-white p-3 text-sm shadow-sm ring-1 ring-slate-200/70">
+        <div className="mt-3 rounded-2xl bg-surface p-3 text-sm shadow-sm ring-1 ring-line">
           初回 <strong className="tnum">{formatRate(first.accuracy)}</strong> →
           最新 <strong className="tnum">{formatRate(latest.accuracy)}</strong>
           <span
@@ -94,10 +94,10 @@ export function ExerciseSetDetailPage() {
             style={{
               color:
                 (latest.accuracy ?? 0) > (first.accuracy ?? 0)
-                  ? "#0ca30c"
+                  ? "var(--color-good)"
                   : (latest.accuracy ?? 0) < (first.accuracy ?? 0)
-                    ? "#d03b3b"
-                    : "#898781",
+                    ? "var(--color-bad)"
+                    : "var(--color-ink-muted)",
             }}
           >
             {(() => {

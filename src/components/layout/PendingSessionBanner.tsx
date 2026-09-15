@@ -50,7 +50,7 @@ export function PendingSessionBanner() {
   };
 
   return (
-    <div className="mb-4 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
+    <div className="mb-4 rounded-card bg-warn-bg p-3 text-sm text-warn-ink ring-1 ring-warn-line">
       <div className="flex flex-wrap items-center gap-3">
         <span className="flex-1">
           保存できていない記録が{pending.length}件あります。
@@ -62,7 +62,7 @@ export function PendingSessionBanner() {
           onClick={() => {
             if (confirm("保存できていない記録を破棄しますか？")) clearPending();
           }}
-          className="text-xs text-amber-700 hover:underline"
+          className="text-xs text-warn-ink hover:underline"
         >
           破棄
         </button>

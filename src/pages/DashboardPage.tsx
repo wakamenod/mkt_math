@@ -10,6 +10,8 @@ import { DurationTrendChart } from "../components/charts/DurationTrendChart";
 import { PaceTrendChart } from "../components/charts/PaceTrendChart";
 import { WeakSetsChart } from "../components/charts/WeakSetsChart";
 import { StudyEntryList } from "../components/session/StudyEntryList";
+import { QuestStatusPanel } from "../components/quest/QuestStatusPanel";
+import { useTheme } from "../theme/useTheme";
 import {
   useExerciseSets,
   useSessions,
@@ -38,7 +40,7 @@ function ImprovementList({
     );
   }
   return (
-    <ul className="divide-y divide-slate-100 text-sm">
+    <ul className="divide-y divide-line text-sm">
       {items.map((i) => {
         const up = i.accuracyDelta > 0;
         const flat = i.accuracyDelta === 0;
@@ -50,12 +52,18 @@ function ImprovementList({
             >
               {i.label}
             </Link>
-            <span className="shrink-0 text-xs text-slate-400">
+            <span className="shrink-0 text-xs text-ink-faint">
               {i.attemptCount}回
             </span>
             <span
               className="tnum shrink-0 text-sm font-semibold"
-              style={{ color: flat ? "#898781" : up ? "#0ca30c" : "#d03b3b" }}
+              style={{
+                color: flat
+                  ? "var(--color-ink-muted)"
+                  : up
+                    ? "var(--color-good)"
+                    : "var(--color-bad)",
+              }}
             >
               {flat
                 ? "±0"
@@ -70,6 +78,8 @@ function ImprovementList({
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const quest = theme === "quest";
   const sessions = useSessions();
   const videos = useVideoSessions();
   const sets = useExerciseSets();
@@ -90,7 +100,18 @@ export function DashboardPage() {
 
   return (
     <>
-      <PageTitle>ダッシュボード</PageTitle>
+      <PageTitle>{quest ? "ぼうけんのきろく" : "ダッシュボード"}</PageTitle>
+
+      {quest && (
+        <div className="mb-3">
+          <QuestStatusPanel
+            problemCount={summary.problemCount}
+            accuracy={summary.accuracy}
+            streak={streak.current}
+            totalSeconds={time.totalSeconds}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
         <StatTile
@@ -154,7 +175,7 @@ export function DashboardPage() {
       <div className="mt-4 space-y-4">
         <Card
           title="学習のようす"
-          subtitle="濃いほどその日たくさん勉強した日（ビデオ視聴も含む）"
+          subtitle={`${quest ? "明るい" : "濃い"}ほどその日たくさん勉強した日（ビデオ視聴も含む）`}
         >
           <CalendarHeatmap days={stats.heatmap} />
         </Card>
@@ -211,7 +232,10 @@ export function DashboardPage() {
           </>
         )}
 
-        <Card title="進みぐあい" subtitle="色が濃いほど何度も解いた練習問題">
+        <Card
+          title="進みぐあい"
+          subtitle={`色が${quest ? "明るい" : "濃い"}ほど何度も解いた練習問題`}
+        >
           <CoverageGrid coverage={stats.coverage} />
         </Card>
 
@@ -220,7 +244,7 @@ export function DashboardPage() {
           action={
             <Link
               to="/history"
-              className="text-xs text-slate-500 hover:text-slate-900"
+              className="text-xs text-ink-soft hover:text-ink"
             >
               すべて見る
             </Link>

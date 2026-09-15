@@ -79,7 +79,7 @@ export function CategoryTrendChart({
         </LineChart>
       </ChartFrame>
 
-      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
         {categories.map((c, i) => (
           <li key={c.id} className="flex items-center gap-1.5">
             <span

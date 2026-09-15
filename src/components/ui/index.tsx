@@ -14,17 +14,15 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section
-      className={`rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200/70 ${className}`}
-    >
+    <section className={`surface-card p-4 ${className}`}>
       {(title || action) && (
         <header className="mb-3 flex items-start justify-between gap-3">
           <div>
             {title && (
-              <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+              <h2 className="text-sm font-semibold text-ink">{title}</h2>
             )}
             {subtitle && (
-              <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>
+              <p className="mt-0.5 text-xs text-ink-soft">{subtitle}</p>
             )}
           </div>
           {action}
@@ -47,16 +45,16 @@ export function StatTile({
   tone?: "default" | "accuracy" | "duration" | "streak";
 }) {
   const toneClass = {
-    default: "text-slate-900",
+    default: "text-ink",
     accuracy: "text-accuracy",
     duration: "text-duration",
     streak: "text-streak",
   }[tone];
   return (
-    <div className="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-200/70">
-      <p className="text-xs text-slate-500">{label}</p>
+    <div className="surface-card p-3">
+      <p className="text-xs text-ink-soft">{label}</p>
       <p className={`tnum mt-1 text-2xl font-bold ${toneClass}`}>{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-slate-400">{sub}</p>}
+      {sub && <p className="mt-0.5 text-xs text-ink-faint">{sub}</p>}
     </div>
   );
 }
@@ -70,11 +68,12 @@ export function Button({
   variant?: "primary" | "secondary" | "ghost" | "danger";
 }) {
   const variants = {
-    primary: "bg-slate-900 text-white hover:bg-slate-700 disabled:bg-slate-300",
+    primary:
+      "bg-accent text-accent-ink hover:bg-accent-hover disabled:bg-surface-3",
     secondary:
-      "bg-slate-100 text-slate-900 hover:bg-slate-200 disabled:text-slate-400",
-    ghost: "text-slate-600 hover:bg-slate-100",
-    danger: "bg-bad text-white hover:opacity-90",
+      "bg-surface-2 text-ink hover:bg-surface-3 disabled:text-ink-faint",
+    ghost: "text-ink-soft hover:bg-surface-2",
+    danger: "bg-bad text-accent-ink hover:opacity-90",
   };
   return (
     <button
@@ -89,22 +88,22 @@ export function Button({
 export function EmptyState({ title, hint }: { title: string; hint?: string }) {
   return (
     <div className="py-10 text-center">
-      <p className="text-sm font-medium text-slate-600">{title}</p>
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+      <p className="text-sm font-medium text-ink-soft">{title}</p>
+      {hint && <p className="mt-1 text-xs text-ink-faint">{hint}</p>}
     </div>
   );
 }
 
 export function Spinner({ label = "読み込み中…" }: { label?: string }) {
   return (
-    <div className="py-10 text-center text-sm text-slate-400">{label}</div>
+    <div className="py-10 text-center text-sm text-ink-faint">{label}</div>
   );
 }
 
 export function ErrorNote({ error }: { error: unknown }) {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700 ring-1 ring-red-200">
+    <div className="rounded-control bg-danger-bg p-3 text-sm text-danger-ink ring-1 ring-danger-line">
       {message}
     </div>
   );
@@ -120,7 +119,7 @@ export function ProgressBar({
 }) {
   return (
     <div
-      className={`h-2 overflow-hidden rounded-full bg-slate-200 ${className}`}
+      className={`h-2 overflow-hidden rounded-full bg-surface-3 ${className}`}
     >
       <div
         className="h-full rounded-full bg-accuracy transition-[width]"

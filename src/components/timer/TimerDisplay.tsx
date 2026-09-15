@@ -10,13 +10,13 @@ export function TimerDisplay({
   return (
     <div className="text-center">
       <p
-        className={`tnum text-6xl font-bold tracking-tight tabular-nums sm:text-7xl ${
-          running ? "text-slate-900" : "text-slate-400"
+        className={`display tnum text-6xl font-bold tracking-tight tabular-nums sm:text-7xl ${
+          running ? "text-ink" : "text-ink-faint"
         }`}
       >
         {formatClock(seconds)}
       </p>
-      <p className="mt-1 text-xs text-slate-400">
+      <p className="mt-1 text-xs text-ink-faint">
         {running ? "計測中" : "一時停止中"}
       </p>
     </div>

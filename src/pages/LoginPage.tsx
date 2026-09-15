@@ -38,7 +38,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="メールアドレス"
-            className="w-full rounded-xl bg-slate-100 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full rounded-xl bg-surface-2 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-accent"
           />
           <input
             type="password"
@@ -47,7 +47,7 @@ export function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="パスワード"
-            className="w-full rounded-xl bg-slate-100 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full rounded-xl bg-surface-2 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-accent"
           />
           {error != null && <ErrorNote error={error} />}
           <Button type="submit" className="w-full py-3" disabled={busy}>
@@ -55,7 +55,7 @@ export function LoginPage() {
           </Button>
         </form>
       </Card>
-      <p className="mt-4 text-center text-xs text-slate-400">
+      <p className="mt-4 text-center text-xs text-ink-faint">
         ダッシュボードの閲覧にログインは不要です
       </p>
     </div>

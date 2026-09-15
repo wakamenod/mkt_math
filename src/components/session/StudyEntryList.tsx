@@ -44,7 +44,7 @@ export function StudyEntryList({
     return <EmptyState title={emptyTitle} hint={emptyHint} />;
 
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="divide-y divide-line">
       {entries.map((e) =>
         e.kind === "practice" ? (
           <SessionCard

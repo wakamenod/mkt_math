@@ -9,6 +9,7 @@ import {
 import { TimerDisplay } from "../components/timer/TimerDisplay";
 import { Button, Card, ErrorNote, Spinner } from "../components/ui";
 import { useAuth } from "../auth/useAuth";
+import { useTheme } from "../theme/useTheme";
 import { useExerciseSets, useSessions } from "../hooks/queries";
 import { useCreateSession, useCreateVideoSession } from "../hooks/mutations";
 import {
@@ -33,6 +34,8 @@ interface StoppedResult {
 
 export function StudyPage() {
   const { user } = useAuth();
+  const { theme } = useTheme();
+  const quest = theme === "quest";
   const [searchParams, setSearchParams] = useSearchParams();
   const sets = useExerciseSets();
   const sessions = useSessions();
@@ -130,7 +133,7 @@ export function StudyPage() {
       <>
         <PageTitle>{title}</PageTitle>
         <Card>
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-ink-soft">
             {target.kind === "video"
               ? "視聴時間を計測中"
               : `全${activeSet?.problem_count}問`}
@@ -140,7 +143,7 @@ export function StudyPage() {
           </div>
 
           {timer.isAbandoned && (
-            <div className="mb-4 rounded-xl bg-amber-50 p-3 text-xs text-amber-900 ring-1 ring-amber-200">
+            <div className="mb-4 rounded-control bg-warn-bg p-3 text-xs text-warn-ink ring-1 ring-warn-line">
               {formatDuration(timer.seconds)}
               経過しています。タイマーの止め忘れかもしれません。破棄して測り直せます。
             </div>
@@ -173,7 +176,7 @@ export function StudyPage() {
             onClick={() => {
               if (confirm("この計測を破棄しますか？")) timer.clear();
             }}
-            className="mt-4 w-full text-xs text-slate-400 hover:text-slate-600"
+            className="mt-4 w-full text-xs text-ink-faint hover:text-ink-soft"
           >
             計測を破棄する
           </button>
@@ -206,27 +209,32 @@ export function StudyPage() {
   // --- 何をするか選ぶ ---
   return (
     <>
-      <PageTitle>今日は何をする？</PageTitle>
+      <PageTitle>{quest ? "本日のクエスト" : "今日は何をする？"}</PageTitle>
 
       <button
         onClick={() => timer.start({ kind: "video" })}
-        className="mb-4 flex w-full items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-slate-200/70 transition active:scale-[0.99] hover:ring-video"
+        className="mb-4 flex w-full items-center gap-3 rounded-2xl bg-surface p-4 text-left shadow-sm ring-1 ring-line transition active:scale-[0.99] hover:ring-video"
       >
         <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-video/10 text-xl">
           🎥
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-bold text-slate-900">
-            講義ビデオを見る
+          <span className="block text-sm font-bold text-ink">
+            {quest ? "けんじゃの教えを聞く" : "講義ビデオを見る"}
           </span>
-          <span className="block text-xs text-slate-500">
-            視聴した時間だけを記録します
+          <span className="block text-xs text-ink-soft">
+            {quest
+              ? "講義ビデオ — 見ていた時間を記録します"
+              : "視聴した時間だけを記録します"}
           </span>
         </span>
-        <span className="shrink-0 text-slate-300">›</span>
+        <span className="shrink-0 text-ink-faint">›</span>
       </button>
 
-      <Card title="問題を解く" subtitle="番号をタップすると計測が始まります">
+      <Card
+        title={quest ? "たたかう" : "問題を解く"}
+        subtitle="番号をタップすると計測が始まります"
+      >
         <ExerciseSetPicker
           sets={sets.data ?? []}
           attemptCounts={attemptCounts}

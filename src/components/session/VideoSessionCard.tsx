@@ -14,13 +14,13 @@ export function VideoSessionCard({
         🎥
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-slate-900">講義ビデオ</p>
-        <p className="tnum mt-0.5 text-xs text-slate-500">
+        <p className="text-sm font-semibold text-ink">講義ビデオ</p>
+        <p className="tnum mt-0.5 text-xs text-ink-soft">
           {formatIsoDateJp(session.study_date)} ·{" "}
           {formatDuration(session.duration_seconds)}
         </p>
         {session.note && (
-          <p className="mt-1 truncate text-xs text-slate-400">{session.note}</p>
+          <p className="mt-1 truncate text-xs text-ink-faint">{session.note}</p>
         )}
       </div>
       {action}

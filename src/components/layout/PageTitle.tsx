@@ -9,7 +9,7 @@ export function PageTitle({
 }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h1 className="text-xl font-bold text-slate-900">{children}</h1>
+      <h1 className="text-xl font-bold text-ink">{children}</h1>
       {action}
     </div>
   );

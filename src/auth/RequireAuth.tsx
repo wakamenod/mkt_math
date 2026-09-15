@@ -10,21 +10,19 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-500">読み込み中…</div>;
+    return <div className="p-8 text-center text-ink-soft">読み込み中…</div>;
   }
 
   if (!user) {
     return (
       <div className="mx-auto max-w-sm px-4 py-16 text-center">
-        <p className="text-lg font-semibold text-slate-900">
-          閲覧専用モードです
-        </p>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="text-lg font-semibold text-ink">閲覧専用モードです</p>
+        <p className="mt-2 text-sm text-ink-soft">
           記録の入力・編集にはログインが必要です。
         </p>
         <Link
           to="/login"
-          className="mt-6 inline-block rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white"
+          className="mt-6 inline-block rounded-xl bg-accent px-6 py-3 font-semibold text-accent-ink"
         >
           ログイン
         </Link>

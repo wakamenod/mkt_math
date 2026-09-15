@@ -64,7 +64,7 @@ export function DurationTrendChart({ data }: { data: DailyTimePoint[] }) {
             name="問題演習"
             stackId="time"
             fill={CHART.duration}
-            stroke="#ffffff"
+            stroke={CHART.surface}
             strokeWidth={2}
           />
           <Bar
@@ -72,7 +72,7 @@ export function DurationTrendChart({ data }: { data: DailyTimePoint[] }) {
             name="講義ビデオ"
             stackId="time"
             fill={CHART.video}
-            stroke="#ffffff"
+            stroke={CHART.surface}
             strokeWidth={2}
             radius={[4, 4, 0, 0]}
           />
@@ -80,7 +80,7 @@ export function DurationTrendChart({ data }: { data: DailyTimePoint[] }) {
       </ChartFrame>
 
       {hasVideo && (
-        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
           <li className="flex items-center gap-1.5">
             <span
               className="inline-block size-2.5 rounded-sm"

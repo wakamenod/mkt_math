@@ -1,7 +1,14 @@
 import type { HeatmapDay } from "../../stats/selectors";
 import { formatIsoDateJp } from "../../lib/format";
 
-const LEVEL_COLORS = ["#f0efec", "#b7d3f6", "#6da7ec", "#2a78d6", "#184f95"];
+// テーマで淡→濃（明るい面）／暗→明（暗い面）が入れ替わる
+const LEVEL_COLORS = [
+  "var(--color-heat-0)",
+  "var(--color-heat-1)",
+  "var(--color-heat-2)",
+  "var(--color-heat-3)",
+  "var(--color-heat-4)",
+];
 const WEEKDAY_LABELS = ["", "月", "", "水", "", "金", ""];
 
 /**
@@ -21,7 +28,7 @@ export function CalendarHeatmap({ days }: { days: HeatmapDay[] }) {
             {WEEKDAY_LABELS.map((label, i) => (
               <span
                 key={i}
-                className="flex h-[11px] w-3 items-center text-[9px] leading-none text-slate-400"
+                className="flex h-[11px] w-3 items-center text-[9px] leading-none text-ink-faint"
               >
                 {label}
               </span>
@@ -46,7 +53,7 @@ export function CalendarHeatmap({ days }: { days: HeatmapDay[] }) {
         </div>
       </div>
 
-      <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-slate-400">
+      <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-ink-faint">
         <span>少ない</span>
         {LEVEL_COLORS.map((c) => (
           <span

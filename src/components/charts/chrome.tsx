@@ -2,26 +2,31 @@ import type { ReactNode } from "react";
 import { ResponsiveContainer } from "recharts";
 
 /** 全チャート共通の寸法・配色。個々のチャートで色を直書きしない。 */
+/**
+ * 全チャート共通の配色。値は CSS 変数なので、テーマを切り替えると
+ * 再描画なしで色も変わる（SVG の fill/stroke は var() を受け付ける）。
+ * 個々のチャートで色を直書きしない。
+ */
 export const CHART = {
-  grid: "#e1e0d9",
-  axis: "#c3c2b7",
-  muted: "#898781",
-  accuracy: "#2a78d6",
-  duration: "#eb6834",
-  pace: "#4a3aa7",
-  /** 講義ビデオ。問題演習(orange)との組み合わせは CVD 検証済み。 */
-  video: "#4a3aa7",
-  good: "#0ca30c",
-  bad: "#d03b3b",
+  grid: "var(--color-grid)",
+  axis: "var(--color-axis)",
+  muted: "var(--color-ink-muted)",
+  surface: "var(--color-surface)",
+  accuracy: "var(--color-accuracy)",
+  duration: "var(--color-duration)",
+  pace: "var(--color-pace)",
+  video: "var(--color-video)",
+  good: "var(--color-good)",
+  bad: "var(--color-bad)",
   /** CVD 検証済みの並び。順序を入れ替えないこと。 */
   series: [
-    "#2a78d6",
-    "#eb6834",
-    "#1baf7a",
-    "#eda100",
-    "#e87ba4",
-    "#008300",
-    "#4a3aa7",
+    "var(--color-series-1)",
+    "var(--color-series-2)",
+    "var(--color-series-3)",
+    "var(--color-series-4)",
+    "var(--color-series-5)",
+    "var(--color-series-6)",
+    "var(--color-series-7)",
   ],
 } as const;
 
@@ -73,8 +78,8 @@ export function TooltipBox({
   rows: { label: string; value: string; color?: string }[];
 }) {
   return (
-    <div className="rounded-xl bg-white/95 px-3 py-2 text-xs shadow-lg ring-1 ring-slate-200 backdrop-blur">
-      <p className="font-semibold text-slate-900">{title}</p>
+    <div className="rounded-xl bg-surface/95 px-3 py-2 text-xs shadow-lg ring-1 ring-line backdrop-blur">
+      <p className="font-semibold text-ink">{title}</p>
       <ul className="mt-1 space-y-0.5">
         {rows.map((r) => (
           <li key={r.label} className="flex items-center gap-2">
@@ -84,8 +89,8 @@ export function TooltipBox({
                 style={{ backgroundColor: r.color }}
               />
             )}
-            <span className="text-slate-500">{r.label}</span>
-            <span className="tnum ml-auto font-semibold text-slate-900">
+            <span className="text-ink-soft">{r.label}</span>
+            <span className="tnum ml-auto font-semibold text-ink">
               {r.value}
             </span>
           </li>

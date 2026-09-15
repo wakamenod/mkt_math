@@ -10,7 +10,7 @@ import {
 } from "../hooks/mutations";
 
 const inputClass =
-  "w-full rounded-xl bg-slate-100 px-3 py-2 text-sm outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-slate-900";
+  "w-full rounded-xl bg-surface-2 px-3 py-2 text-sm outline-none placeholder:text-ink-faint focus:ring-2 focus:ring-accent";
 
 function CategoryForm({ nextSortOrder }: { nextSortOrder: number }) {
   const create = useCreateCategory();
@@ -68,7 +68,7 @@ function ExerciseSetForm({
       onSubmit={onSubmit}
       className="mt-3 flex flex-wrap items-center gap-2"
     >
-      <label className="flex items-center gap-1.5 text-xs text-slate-500">
+      <label className="flex items-center gap-1.5 text-xs text-ink-soft">
         練習問題
         <input
           type="number"
@@ -78,7 +78,7 @@ function ExerciseSetForm({
           className={`${inputClass} tnum w-20`}
         />
       </label>
-      <label className="flex items-center gap-1.5 text-xs text-slate-500">
+      <label className="flex items-center gap-1.5 text-xs text-ink-soft">
         問題数
         <input
           type="number"
@@ -124,7 +124,7 @@ function ProblemCountField({ id, value }: { id: string; value: number }) {
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
       onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
-      className="tnum w-16 rounded-lg bg-slate-100 px-2 py-1 text-right text-sm outline-none focus:ring-2 focus:ring-slate-900"
+      className="tnum w-16 rounded-lg bg-surface-2 px-2 py-1 text-right text-sm outline-none focus:ring-2 focus:ring-accent"
       aria-label="問題数"
     />
   );
@@ -167,7 +167,7 @@ export function ManagePage() {
           {cats.length === 0 ? (
             <EmptyState title="大分類がありません" />
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-line">
               {cats.map((c) => {
                 const mine = (sets.data ?? [])
                   .filter((s) => s.category.id === c.id)
@@ -180,36 +180,36 @@ export function ManagePage() {
                       onClick={() => setOpenId(open ? null : c.id)}
                       className="flex w-full items-center gap-2 py-1 text-left"
                     >
-                      <span className="flex-1 text-sm font-semibold text-slate-900">
+                      <span className="flex-1 text-sm font-semibold text-ink">
                         {c.name}
                       </span>
-                      <span className="tnum text-xs text-slate-400">
+                      <span className="tnum text-xs text-ink-faint">
                         練習問題{mine.length}件 / 計{total}問
                       </span>
-                      <span className="text-slate-400">{open ? "▲" : "▼"}</span>
+                      <span className="text-ink-faint">{open ? "▲" : "▼"}</span>
                     </button>
 
                     {open && (
                       <div className="pt-2 pb-1">
                         {mine.length === 0 ? (
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-ink-faint">
                             まだ練習問題がありません
                           </p>
                         ) : (
-                          <ul className="divide-y divide-slate-100">
+                          <ul className="divide-y divide-line">
                             {mine.map((s) => (
                               <li
                                 key={s.id}
                                 className="flex items-center gap-2 py-1.5"
                               >
-                                <span className="tnum flex-1 text-sm text-slate-700">
+                                <span className="tnum flex-1 text-sm text-ink">
                                   練習問題{s.number}
                                 </span>
                                 <ProblemCountField
                                   id={s.id}
                                   value={s.problem_count}
                                 />
-                                <span className="text-xs text-slate-400">
+                                <span className="text-xs text-ink-faint">
                                   問
                                 </span>
                                 <button
@@ -227,7 +227,7 @@ export function ManagePage() {
                                     )
                                       deleteSet.mutate(s.id);
                                   }}
-                                  className="rounded-lg px-2 py-1 text-xs text-slate-400 enabled:hover:bg-red-50 enabled:hover:text-red-600 disabled:text-slate-200"
+                                  className="rounded-lg px-2 py-1 text-xs text-ink-faint enabled:hover:bg-danger-bg enabled:hover:text-danger-ink disabled:text-ink-faint"
                                 >
                                   削除
                                 </button>
