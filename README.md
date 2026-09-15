@@ -1,0 +1,72 @@
+# 数学の記録 (mkt_math)
+
+息子の数学の学習を記録するウェブアプリ。練習問題ごとに時間を計測し、正解数を記録して、
+正答率や学習時間の推移、苦手な問題、連続学習日数などをダッシュボードで見る。
+
+- 閲覧は誰でも可（ログイン不要）
+- 記録の入力・編集はログインしたオーナーのみ
+- スマホ・PC・タブレットで同じデータが見える（Supabase）
+
+## セットアップ
+
+### 1. Supabase
+
+1. Supabase でプロジェクトを作成する。
+2. SQL Editor で次の順に実行する。
+   - `supabase/migrations/20260915000001_init.sql`
+   - `supabase/migrations/20260915000002_rls.sql`
+   - `supabase/seed/seed_daisu1.sql`
+3. 検証: 代数1の問題数合計が **101** になること。
+   ```sql
+   select sum(problem_count) from public.exercise_sets es
+     join public.categories c on c.id = es.category_id where c.name = '代数1';
+   ```
+4. Authentication → Users から自分のアカウントを手動で作成する。
+5. Authentication → Sign In / Providers で **新規サインアップを無効化**する。
+   これにより「認証済みユーザー = オーナー本人」が成立し、RLS の書き込みポリシーが意味を持つ。
+
+### 2. ローカル開発
+
+```bash
+cp .env.example .env.local   # VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY を記入
+npm install
+npm run dev
+```
+
+### 3. GitHub Pages へのデプロイ
+
+1. リポジトリの Settings → Secrets and variables → Actions に
+   `SUPABASE_URL` と `SUPABASE_ANON_KEY` を登録する。
+2. Settings → Pages の Source を **GitHub Actions** にする。
+3. `main` に push すると `.github/workflows/deploy.yml` がデプロイする。
+
+リポジトリ名が `mkt_math` 以外の場合は `vite.config.ts` の `base`（または環境変数
+`VITE_BASE_PATH`）を `/<リポジトリ名>/` に合わせる。
+
+## コマンド
+
+| コマンド | 内容 |
+|---|---|
+| `npm run dev` | 開発サーバー |
+| `npm run build` | 本番ビルド |
+| `npm test` | 集計ロジックのテスト（Vitest） |
+| `npm run typecheck` | 型チェック |
+| `npm run lint` | oxlint |
+
+## 設計上の決めごと
+
+- **正答率の分母は `sessions.problem_count_snapshot`**。マスタの `problem_count` は使わない。
+  後から「この練習問題は実は10問だった」と修正しても、過去の正答率が遡って変わらないようにするため。
+- **日付は JST で確定させる**。`sessions.study_date` が JST の生成列で、ストリークも日次集計も
+  すべてこれを基準にする。クライアント側では `'YYYY-MM-DD'` 文字列のまま扱い、`new Date('2026-09-15')`
+  のようなパースはしない（ローカルTZ解釈でオフバイワンが出るため）。
+- **タイマーは壁時計ベース**。localStorage に開始時刻を置き、表示のたびに `Date.now()` から
+  再計算する。`setInterval` でカウンタを加算しない（バックグラウンドタブでスロットリングされ狂う）。
+  リロードや画面ロックを跨いでも正しい。
+- **統計はすべてクライアント側の純関数**（`src/stats/selectors.ts`）。全セッションを1本の
+  クエリキャッシュに載せて集計する。指標の追加にマイグレーションが要らない。数千行までは
+  この方針で問題ない。
+- **ルーティングは HashRouter**。GitHub Pages に SPA フォールバックがないため。
+- **チャート配色は検証済みの固定順**（`src/index.css` の `--color-series-*`）。
+  色覚多様性のもとでも隣接系列が区別できる並びなので、順序を入れ替えない。
+- **大分類・練習問題はハードコードしない**。設定画面（`/manage`）から追加・編集できる。

@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+
+  /* --- チャート配色 ---
+     validate_palette.js で light / surface #ffffff に対して検証済み。
+     全チェック PASS、うち aqua/yellow/magenta は対 surface コントラストが 3:1 未満
+     （= 直接ラベルを必ず添えること）。順序は CVD 安全性のためのものなので入れ替えない。 */
+  --color-series-1: #2a78d6; /* blue    */
+  --color-series-2: #eb6834; /* orange  */
+  --color-series-3: #1baf7a; /* aqua    */
+  --color-series-4: #eda100; /* yellow  */
+  --color-series-5: #e87ba4; /* magenta */
+  --color-series-6: #008300; /* green   */
+  --color-series-7: #4a3aa7; /* violet  */
+
+  /* 役割ごとの別名。チャートは必ずこちらを参照する */
+  --color-accuracy: #2a78d6;
+  --color-duration: #eb6834;
+  --color-pace: #4a3aa7;
+  --color-streak: #eb6834;
+
+  /* ステータス（系列色とは用途を分ける） */
+  --color-good: #0ca30c;
+  --color-bad: #d03b3b;
+
+  /* 学習ヒートマップ: blue の連続ランプ（単一色相・淡→濃） */
+  --color-heat-0: #f0efec;
+  --color-heat-1: #b7d3f6;
+  --color-heat-2: #6da7ec;
+  --color-heat-3: #2a78d6;
+  --color-heat-4: #184f95;
+
+  /* チャートのクローム */
+  --color-grid: #e1e0d9;
+  --color-axis: #c3c2b7;
+  --color-ink-muted: #898781;
+}
+
+:root {
+  color-scheme: light;
+  background-color: var(--color-slate-100);
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 軸目盛り・表・タイマーなど、縦に揃える必要がある数字だけに使う */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
