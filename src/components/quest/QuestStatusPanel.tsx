@@ -1,5 +1,6 @@
 import { levelFromExp, rankFromAccuracy, streakTitle } from "../../stats/quest";
 import { formatTotalDuration } from "../../lib/format";
+import { OWNER_NAME } from "../../lib/branding";
 
 /**
  * クエストテーマのときだけ出す、冒険者ステータス。
@@ -46,6 +47,10 @@ export function QuestStatusPanel({
         </div>
 
         <div className="min-w-0 flex-1">
+          <p className="display text-xs font-bold tracking-widest text-accent">
+            {OWNER_NAME}
+          </p>
+
           <div className="flex items-baseline justify-between gap-2">
             <p className="truncate text-sm font-bold text-ink">
               {streakTitle(streak)}

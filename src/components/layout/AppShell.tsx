@@ -2,6 +2,8 @@ import { NavLink, Outlet, Link } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import { PendingSessionBanner } from "./PendingSessionBanner";
 import { ThemeToggle } from "../../theme/ThemeToggle";
+import { useTheme } from "../../theme/useTheme";
+import { appTitle } from "../../lib/branding";
 
 const NAV = [
   { to: "/", label: "ホーム", icon: "📊", end: true },
@@ -12,14 +14,20 @@ const NAV = [
 
 export function AppShell() {
   const { user, signOut } = useAuth();
+  const { theme } = useTheme();
+  const quest = theme === "quest";
   const items = NAV.filter((n) => !n.authOnly || user);
 
   return (
     <div className="min-h-dvh bg-surface-2 text-ink">
       <header className="sticky top-0 z-10 border-b border-line bg-surface/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-          <Link to="/" className="text-base font-bold">
-            数学の記録
+          <Link
+            to="/"
+            className={`text-base font-bold ${quest ? "display tracking-widest text-accent" : ""}`}
+            style={quest ? { textShadow: "var(--accent-glow)" } : undefined}
+          >
+            {appTitle(quest)}
           </Link>
 
           <nav className="hidden gap-1 md:flex">

@@ -100,7 +100,7 @@ export function DashboardPage() {
 
   return (
     <>
-      <PageTitle>{quest ? "ぼうけんのきろく" : "ダッシュボード"}</PageTitle>
+      <PageTitle>{quest ? "MKT のぼうけんのきろく" : "ダッシュボード"}</PageTitle>
 
       {quest && (
         <div className="mb-3">
