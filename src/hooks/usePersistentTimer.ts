@@ -46,6 +46,19 @@ function save(state: TimerState | null) {
   }
 }
 
+/** 動いている区間を now で閉じて、止まった状態にする。 */
+function halted(state: TimerState, now: number): TimerState {
+  return {
+    ...state,
+    status: "paused",
+    segments: state.segments.map((seg, i) =>
+      i === state.segments.length - 1 && seg.end === null
+        ? { ...seg, end: now }
+        : seg,
+    ),
+  };
+}
+
 /** 一時停止を除いた実経過ミリ秒。壁時計から都度計算する。 */
 function elapsedMs(state: TimerState, now: number): number {
   return state.segments.reduce(
@@ -112,16 +125,7 @@ export function usePersistentTimer() {
   const pause = useCallback(() => {
     const s = stateRef.current;
     if (!s || s.status !== "running") return;
-    const now = Date.now();
-    update({
-      ...s,
-      status: "paused",
-      segments: s.segments.map((seg, i) =>
-        i === s.segments.length - 1 && seg.end === null
-          ? { ...seg, end: now }
-          : seg,
-      ),
-    });
+    update(halted(s, Date.now()));
   }, [update]);
 
   const resume = useCallback(() => {
@@ -134,18 +138,27 @@ export function usePersistentTimer() {
     });
   }, [update]);
 
-  /** 計測を終了し、保存に必要な値を返す（破棄はまだしない）。 */
+  /**
+   * 計測を終了し、保存に必要な値を返す（記録の破棄はまだしない）。
+   *
+   * ここで時計も実際に止める。返り値だけ返して状態を触らずにいると、
+   * 入力シートで答え合わせをしている間も背後で数字が増え続け、
+   * 「ストップを押したのに止まらない」画面になる。
+   * 入力をキャンセルした場合は一時停止の状態が残るので、再開して続けられる。
+   */
   const stop = useCallback(() => {
     const s = stateRef.current;
     if (!s) return null;
     const now = Date.now();
+    const ended = halted(s, now);
+    update(ended);
     return {
-      target: s.target,
-      startedAt: new Date(s.startedAt).toISOString(),
+      target: ended.target,
+      startedAt: new Date(ended.startedAt).toISOString(),
       endedAt: new Date(now).toISOString(),
-      durationSeconds: Math.round(elapsedMs(s, now) / 1000),
+      durationSeconds: Math.round(elapsedMs(ended, now) / 1000),
     };
-  }, []);
+  }, [update]);
 
   const clear = useCallback(() => update(null), [update]);
 
