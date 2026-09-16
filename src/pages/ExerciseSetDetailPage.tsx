@@ -8,6 +8,8 @@ import {
   StudyEntryList,
   toStudyEntries,
 } from "../components/session/StudyEntryList";
+import { ProblemReference } from "../components/problems";
+import { findProblemSet } from "../content/problems";
 import {
   Button,
   Card,
@@ -41,6 +43,7 @@ export function ExerciseSetDetailPage() {
   const attempts = attemptSeries(sessions.data ?? [], setId);
   const first = attempts[0];
   const latest = attempts[attempts.length - 1];
+  const content = findProblemSet(set.category.name, set.number);
 
   return (
     <>
@@ -110,6 +113,8 @@ export function ExerciseSetDetailPage() {
       )}
 
       <div className="mt-4 space-y-4">
+        {content && <ProblemReference set={content} />}
+
         {attempts.length > 0 ? (
           <div className="grid gap-4 lg:grid-cols-2">
             <Card title="回ごとの正答率">

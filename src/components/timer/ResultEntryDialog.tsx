@@ -43,6 +43,7 @@ export function ResultEntryDialog({
   label,
   problemCount,
   durationSeconds,
+  answers,
   saving,
   error,
   onSave,
@@ -51,6 +52,8 @@ export function ResultEntryDialog({
   label: string;
   problemCount: number;
   durationSeconds: number;
+  /** 答え合わせの面。正解数を入力する前にここで丸をつける。 */
+  answers?: React.ReactNode;
   saving: boolean;
   error: unknown;
   onSave: (correctCount: number, note: string) => void;
@@ -65,6 +68,13 @@ export function ResultEntryDialog({
       <p className="mt-1 text-sm text-ink-soft">
         {formatDuration(durationSeconds)} / 全{problemCount}問
       </p>
+
+      {answers && (
+        <div className="mt-4">
+          <p className="mb-2 text-sm font-semibold text-ink">答え合わせ</p>
+          {answers}
+        </div>
+      )}
 
       <p className="mt-5 text-sm font-semibold text-ink">正解した数は？</p>
       <div className="mt-2 grid grid-cols-6 gap-2">
