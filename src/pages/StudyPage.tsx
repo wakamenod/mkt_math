@@ -38,7 +38,8 @@ interface StoppedResult {
 /**
  * 「何を計測するか」はクエリ文字列に置く。
  * 選んだ瞬間には計測を始めず、この画面でスタートを押してから始める
- * （選び間違えたときや、問題文を読んでいる間の時間を含めないため）。
+ * （選び間違えたときの時間を含めないため）。問題文もスタート後の画面にだけ出す。
+ * 時計が動く前に読めてしまうと、記録が実際にかかった時間より短くなる。
  * URL に持たせてあるので、準備中に再読み込みしても選択が消えない。
  */
 function armedTarget(params: URLSearchParams): TimerTarget | null {
@@ -198,7 +199,7 @@ export function StudyPage() {
         </Card>
 
         {content && (
-          <Card className="mt-4" title="問題">
+          <Card className="mt-4" title="問題" subtitle="答えは解き終わってから出ます">
             <ProblemSheet set={content} />
           </Card>
         )}
@@ -254,10 +255,6 @@ export function StudyPage() {
         </>
       );
     }
-    const content = armedSet
-      ? findProblemSet(armedSet.category.name, armedSet.number)
-      : null;
-
     return (
       <>
         <PageTitle>{armedSet ? setLabel(armedSet) : "講義ビデオ"}</PageTitle>
@@ -268,7 +265,7 @@ export function StudyPage() {
               : "見ていた時間を記録します"}
           </p>
           <p className="mt-1 text-center text-xs text-ink-faint">
-            スタートを押すと計測が始まります
+            スタートを押すと問題が出て、計測が始まります
           </p>
           <div className="mt-5 flex gap-2">
             <Button
@@ -286,12 +283,6 @@ export function StudyPage() {
             </Button>
           </div>
         </Card>
-
-        {content && (
-          <Card className="mt-4" title="問題" subtitle="答えは解き終わってから出ます">
-            <ProblemSheet set={content} />
-          </Card>
-        )}
       </>
     );
   }
