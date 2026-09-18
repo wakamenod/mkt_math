@@ -21,6 +21,7 @@ import { useWakeLock } from "../hooks/useWakeLock";
 import { savePending } from "../lib/pendingSession";
 import { formatDuration } from "../lib/format";
 import { findProblemSet } from "../content/problems";
+import { latestAttempt } from "../stats/selectors";
 import {
   setLabel,
   type ExerciseSetWithCategory,
@@ -210,6 +211,7 @@ export function StudyPage() {
             problemCount={activeSet.problem_count}
             durationSeconds={stopped.durationSeconds}
             answers={content && <AnswerSheet set={content} />}
+            previous={latestAttempt(sessions.data ?? [], activeSet.id)}
             saving={createSession.isPending}
             error={createSession.error}
             onSave={(correct, note) =>

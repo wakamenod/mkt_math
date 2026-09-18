@@ -284,6 +284,19 @@ export function attemptSeries(
     }));
 }
 
+/**
+ * ある練習問題の、直近の記録（前回の結果）。まだ解いたことがなければ null。
+ * 「今回」の結果と並べて見せるためのもので、比較の分母は
+ * そのときの problem_count_snapshot（マスタの現在値ではない）。
+ */
+export function latestAttempt(
+  sessions: SessionWithSet[],
+  exerciseSetId: string,
+): AttemptPoint | null {
+  const series = attemptSeries(sessions, exerciseSetId);
+  return series.length === 0 ? null : series[series.length - 1];
+}
+
 export interface ImprovementStat {
   exerciseSetId: string;
   label: string;

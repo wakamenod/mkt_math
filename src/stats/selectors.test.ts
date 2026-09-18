@@ -3,6 +3,7 @@ import type { SessionWithSet, ExerciseSetWithCategory } from "../types/domain";
 import {
   accuracy,
   attemptSeries,
+  latestAttempt,
   byCategory,
   byExerciseSet,
   coverage,
@@ -240,6 +241,14 @@ describe("反復による改善", () => {
     const [imp] = improvements(sessions);
     expect(imp.accuracyDelta).toBeCloseTo(0.5);
     expect(imp.paceDelta).toBeCloseTo(-30); // 速くなった
+  });
+
+  it("前回の記録は最新の1件（まだ解いていなければ null）", () => {
+    const prev = latestAttempt(sessions, "e6");
+    expect(prev?.attempt).toBe(2);
+    expect(prev?.correctCount).toBe(9);
+    expect(prev?.durationSeconds).toBe(300);
+    expect(latestAttempt(sessions, "e1")).toBeNull();
   });
 
   it("1回しか解いていないセットは対象外", () => {

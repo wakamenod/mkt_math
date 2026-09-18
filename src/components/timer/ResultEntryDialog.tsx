@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { formatDuration } from "../../lib/format";
+import { formatDuration, formatIsoDateJp } from "../../lib/format";
 import { Button, ErrorNote } from "../ui";
+import type { AttemptPoint } from "../../stats/selectors";
 
 function Sheet({ children }: { children: React.ReactNode }) {
   return (
@@ -34,6 +35,75 @@ function NoteField({
   );
 }
 
+/** 差分の表示。0 は「同じ」とだけ出す（±0 は読み違えやすい）。 */
+function Delta({
+  value,
+  unit,
+  betterWhen,
+}: {
+  value: number;
+  unit: string;
+  betterWhen: "lower" | "higher";
+}) {
+  if (value === 0) return <span className="text-ink-faint">前回と同じ</span>;
+  const better = betterWhen === "lower" ? value < 0 : value > 0;
+  const abs = Math.abs(value);
+  const text =
+    unit === "秒"
+      ? `${formatDuration(abs)}${value < 0 ? "速い" : "遅い"}`
+      : `${abs}問${value < 0 ? "少ない" : "多い"}`;
+  return (
+    <span className={better ? "font-semibold text-good" : "text-ink-soft"}>
+      {better ? "↑ " : ""}
+      {text}
+    </span>
+  );
+}
+
+/**
+ * 前回の記録。今回の入力と並べて「速くなったか・当たるようになったか」を見せる。
+ * 正解数の差は、正解数を選ぶまでは出せないので選んでから出る。
+ */
+function PreviousAttempt({
+  previous,
+  durationSeconds,
+  correct,
+}: {
+  previous: AttemptPoint;
+  durationSeconds: number;
+  correct: number | null;
+}) {
+  return (
+    <div className="mt-4 rounded-control bg-surface-2 p-3 text-sm">
+      <p className="text-xs font-semibold text-ink-soft">
+        前回（{formatIsoDateJp(previous.date)} ・ {previous.attempt}回目）
+      </p>
+      <div className="tnum mt-1.5 flex items-baseline justify-between">
+        <span className="text-ink">
+          {formatDuration(previous.durationSeconds)}
+        </span>
+        <Delta
+          value={durationSeconds - previous.durationSeconds}
+          unit="秒"
+          betterWhen="lower"
+        />
+      </div>
+      <div className="tnum mt-1 flex items-baseline justify-between">
+        <span className="text-ink">
+          {previous.correctCount} / {previous.problemCount}問 正解
+        </span>
+        {correct !== null && (
+          <Delta
+            value={correct - previous.correctCount}
+            unit="問"
+            betterWhen="higher"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 /**
  * ストップ直後の入力。
  * 問題演習は「常に全問解く」前提なので入力は正解数のみ。
@@ -44,6 +114,7 @@ export function ResultEntryDialog({
   problemCount,
   durationSeconds,
   answers,
+  previous,
   saving,
   error,
   onSave,
@@ -54,6 +125,8 @@ export function ResultEntryDialog({
   durationSeconds: number;
   /** 答え合わせの面。正解数を入力する前にここで丸をつける。 */
   answers?: React.ReactNode;
+  /** 同じ練習問題の直近の記録。初めてなら null。 */
+  previous?: AttemptPoint | null;
   saving: boolean;
   error: unknown;
   onSave: (correctCount: number, note: string) => void;
@@ -68,6 +141,14 @@ export function ResultEntryDialog({
       <p className="mt-1 text-sm text-ink-soft">
         {formatDuration(durationSeconds)} / 全{problemCount}問
       </p>
+
+      {previous && (
+        <PreviousAttempt
+          previous={previous}
+          durationSeconds={durationSeconds}
+          correct={correct}
+        />
+      )}
 
       {answers && (
         <div className="mt-4">
